@@ -17,7 +17,7 @@ const urlStruct = {
 };
 
 const onRequest = (request, response) => {
-  console.log(request.url);
+  // console.log(request.url);
 
   const protocol = request.connection.encrypted ? 'https' : 'http';
   const parsedUrl = new URL(request.url, `${protocol}://${request.headers.host}`);
@@ -33,5 +33,5 @@ const onRequest = (request, response) => {
 };
 
 http.createServer(onRequest).listen(port, () => {
-  console.log(`Listening on 127.0.0.1:${port}`);
+  // console.log(`Listening on 127.0.0.1:${port}`);
 });
