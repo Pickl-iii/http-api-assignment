@@ -5,7 +5,55 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+    const handleResponse = (response) => {
+      response.text().then((resText) => {
+        const contentType = response.headers.get('Content-Type');
 
+        const content = document.querySelector('#content');
+        content.appendChild(document.createElement('hr'));
+
+        const h1 = document.createElement('h1');
+        const p = document.createElement('p');
+
+        console.log(resText);
+
+        if(contentType === 'application/json') {
+          const parsedResponse = JSON.parse(resText);
+          h1.textContent = `${response.status}`;
+          p.textContent = `${parsedResponse.message}`;
+        } else if (contentType === 'text/xml') {
+          const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
+          h1.textContent = response.status;
+          p.textContent = parsedResponse.querySelector('message').textContent;
+        }
+
+        content.appendChild(h1);
+        content.appendChild(p);      
+      });
+    };
+
+    const sendFetchRequest = (url, acceptedType) => {
+      const options = {
+        method: 'GET',
+        headers: {'Accept': acceptedType},
+      }
+
+      const fetchPromise = fetch(url, options);
+
+      fetchPromise.then((response) => { handleResponse(response) });
+    };
+
+    const init = () => {
+      const button = document.querySelector("#send");
+      const url = document.querySelector("#page");
+      const type = document.querySelector("#type");
+
+      const sendRequest = () => sendFetchRequest(url.value, type.value);
+      
+      button.addEventListener('click', sendRequest);
+    };
+
+    window.onload = init;
   </script>
 </head>
 <body>
